@@ -11,12 +11,6 @@ provider "yandex" {
   zone = "ru-central1-b"
 }
 
-resource "random_string" "sfx" {
-  length  = 3
-  special = false
-  upper   = false
-}
-
 resource "yandex_compute_instance" "build" {
 
   name = "build"
@@ -46,10 +40,11 @@ resource "yandex_compute_instance" "build" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 
+  # Recreate inventory on each run, create build server first
   provisioner "local-exec" {
     command = <<-EOS1
-				tee -a /etc/ansible/hosts <<-EOS2
-					[build.${random_string.sfx.result}]
+				tee /etc/ansible/hosts <<-EOS2
+					[build]
 					${self.network_interface.0.nat_ip_address}
 				EOS2
 	EOS1
@@ -85,12 +80,16 @@ resource "yandex_compute_instance" "staging" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 
+  # Append to inventory when creating staging server
   provisioner "local-exec" {
     command = <<-EOS1
 				tee -a /etc/ansible/hosts <<-EOS2
-					[staging.${random_string.sfx.result}]
+					[staging]
 					${self.network_interface.0.nat_ip_address}
 				EOS2
 	EOS1
   }
+
+  depends_on = [yandex_compute_instance.build]
+
 }
