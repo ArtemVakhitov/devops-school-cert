@@ -1,0 +1,25 @@
+- name: Prepare build server
+  hosts: build
+  become: yes
+  become_user: root
+
+  tasks:
+  - name: Ensure necessary packages are present
+    apt:
+      update_cache: true
+      name:
+        - git
+        - maven
+      state: present
+
+- name: Prepare staging server
+  hosts: staging
+  become: yes
+  become_user: root
+
+  tasks:
+  - name: Ensure tomcat pkg is present
+    apt:
+      update_cache: true
+      name: tomcat9
+      state: present
