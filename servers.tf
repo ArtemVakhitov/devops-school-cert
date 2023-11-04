@@ -82,7 +82,7 @@ resource "yandex_compute_instance" "staging" {
   provisioner "local-exec" {
     command = <<-EOS1
 				tee -a /etc/ansible/hosts <<-EOS2
-					[build]
+					[staging]
 					${self.network_interface.0.nat_ip_address}
 				EOS2
 	EOS1
