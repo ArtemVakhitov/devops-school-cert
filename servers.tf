@@ -45,7 +45,7 @@ resource "yandex_compute_instance" "build" {
     command = <<-EOS1
 				tee /etc/ansible/hosts <<-EOS2
 					[build]
-					${self.network_interface.0.nat_ip_address}
+					${self.network_interface.0.nat_ip_address} ansible_user=ubuntu ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
 				EOS2
 	EOS1
   }
@@ -85,7 +85,7 @@ resource "yandex_compute_instance" "staging" {
     command = <<-EOS1
 				tee -a /etc/ansible/hosts <<-EOS2
 					[staging]
-					${self.network_interface.0.nat_ip_address}
+					${self.network_interface.0.nat_ip_address} ansible_user=ubuntu ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
 				EOS2
 	EOS1
   }
