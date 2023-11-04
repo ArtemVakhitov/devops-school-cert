@@ -11,6 +11,12 @@ provider "yandex" {
   zone = "ru-central1-b"
 }
 
+resource "random_string" "sfx" {
+  length  = 3
+  special = false
+  upper   = false
+}
+
 resource "yandex_compute_instance" "build" {
 
   name = "build"
@@ -43,7 +49,7 @@ resource "yandex_compute_instance" "build" {
   provisioner "local-exec" {
     command = <<-EOS1
 				tee -a /etc/ansible/hosts <<-EOS2
-					[build]
+					[build.${random_string.sfx}]
 					${self.network_interface.0.nat_ip_address}
 				EOS2
 	EOS1
@@ -82,7 +88,7 @@ resource "yandex_compute_instance" "staging" {
   provisioner "local-exec" {
     command = <<-EOS1
 				tee -a /etc/ansible/hosts <<-EOS2
-					[staging]
+					[staging.${random_string.sfx}]
 					${self.network_interface.0.nat_ip_address}
 				EOS2
 	EOS1
