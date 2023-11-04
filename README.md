@@ -1,6 +1,6 @@
 # DevOps School Certification Assignment
 
-Write a Jenkins pipeline that launches VM instances at a cloud provider, builds a Java app at the build server, and deploys the app on the staging server. Terraform and Ansible code muse be used. The app must be deployed in a container.
+Write a Jenkins pipeline that launches VM instances at a cloud provider, builds a Java app on the build server, and deploys the app on the staging server. Terraform and Ansible code must be used. The app must be deployed in a container.
 
 ## Steps
 
