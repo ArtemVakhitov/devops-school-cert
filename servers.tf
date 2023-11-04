@@ -49,7 +49,7 @@ resource "yandex_compute_instance" "build" {
   provisioner "local-exec" {
     command = <<-EOS1
 				tee -a /etc/ansible/hosts <<-EOS2
-					[build.${random_string.sfx}]
+					[build.${random_string.sfx.result}]
 					${self.network_interface.0.nat_ip_address}
 				EOS2
 	EOS1
@@ -88,7 +88,7 @@ resource "yandex_compute_instance" "staging" {
   provisioner "local-exec" {
     command = <<-EOS1
 				tee -a /etc/ansible/hosts <<-EOS2
-					[staging.${random_string.sfx}]
+					[staging.${random_string.sfx.result}]
 					${self.network_interface.0.nat_ip_address}
 				EOS2
 	EOS1
