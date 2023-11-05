@@ -8,14 +8,17 @@
       name:
         - git
         - maven
+        - docker.io
       state: present
 
 - name: Prepare staging server
   hosts: staging
 
   tasks:
-  - name: Ensure tomcat pkg is present
+  - name: Ensure necessary packages are present
     apt:
       update_cache: true
-      name: tomcat9
+      name:
+        - tomcat9
+        - docker.io
       state: present
