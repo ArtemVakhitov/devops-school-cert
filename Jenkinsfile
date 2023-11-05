@@ -50,7 +50,7 @@ pipeline {
                 DKR = credentials("477ad5b1-786e-44ab-80f5-0faae9a7a84b")
             }
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output staging_ip) <<-EOF
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output build_ip) <<-EOF
 						cd myboxfuse
 						sudo docker build -t artemvakhitov/myboxweb .
 						sudo docker login -u $DKR_USR -p $DKR_PSW
