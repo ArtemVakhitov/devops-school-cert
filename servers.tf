@@ -75,7 +75,9 @@ resource "yandex_compute_instance" "staging" {
 
 # Work around lack of documentation on relative inventory paths
 resource "local_file" "ansible_config" {
-  content = "inventory="${path.root}/hosts"
+  content  = <<-EOF
+								inventory="${path.root}/hosts"
+								EOF
   filename = "${path.root}/ansible.cfg"
 }
 
