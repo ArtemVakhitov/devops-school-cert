@@ -20,6 +20,7 @@ pipeline {
                 }
             }
         }
+
         stage ('prepare servers using Ansible') {
             steps {
                 dir ("devops-school-cert") {
@@ -27,6 +28,7 @@ pipeline {
                 } 
             }
         }
+
         stage ('git clone app repo') {
             steps {
                 sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output build_ip) <<-EOF
@@ -35,6 +37,7 @@ pipeline {
                    '''
             }
         }
+
         stage ('build app') {
             steps {
                 sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output build_ip) <<-EOF
@@ -43,8 +46,8 @@ pipeline {
 						EOF
                    '''
             }
-            
         }
+
         stage ('build & push docker image') {
             environment {
                 DKR = credentials("477ad5b1-786e-44ab-80f5-0faae9a7a84b")
@@ -59,6 +62,7 @@ pipeline {
                    '''
             }
         }
+
         stage ('deploy on staging using docker') {
             steps {
                 sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output staging_ip) <<-EOF
