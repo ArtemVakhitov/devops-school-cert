@@ -40,15 +40,6 @@ resource "yandex_compute_instance" "build" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 
-  # Recreate inventory on each run, create build server first
-  provisioner "local-exec" {
-    command = <<-EOS1
-				tee /etc/ansible/hosts <<-EOS2
-					[build]
-					${self.network_interface.0.nat_ip_address} ansible_user=ubuntu ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
-				EOS2
-	EOS1
-  }
 }
 
 resource "yandex_compute_instance" "staging" {
@@ -80,16 +71,19 @@ resource "yandex_compute_instance" "staging" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 
-  # Append to inventory when creating staging server
-  provisioner "local-exec" {
-    command = <<-EOS1
-				tee -a /etc/ansible/hosts <<-EOS2
-					[staging]
-					${self.network_interface.0.nat_ip_address} ansible_user=ubuntu ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
-				EOS2
-	EOS1
-  }
+}
 
-  depends_on = [yandex_compute_instance.build]
-
+resource "local_file" "inventory" {
+  content  = <<-EOF
+								[build]
+								${yandex_compute_instance.build.network_interface.0.nat_ip_address}
+								[staging]
+								${yandex_compute_instance.staging.network_interface.0.nat_ip_address}
+								[all:vars]
+								ansible_user=ubuntu
+								ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
+								ansible_become=yes
+								ansible_become_user=root
+								EOF
+  filename = "/etc/ansible/hosts"
 }
