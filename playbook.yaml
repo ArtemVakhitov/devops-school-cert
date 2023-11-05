@@ -24,6 +24,5 @@
     apt:
       update_cache: true
       name:
-        - tomcat9
         - docker.io
       state: present
