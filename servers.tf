@@ -73,7 +73,13 @@ resource "yandex_compute_instance" "staging" {
 
 }
 
-resource "local_file" "inventory" {
+# Work around lack of documentation on relative inventory paths
+resource "local_file" "ansible_config" {
+  content = "inventory="${path.root}/hosts"
+  filename = "${path.root}/ansible.cfg"
+}
+
+resource "local_file" "ansible_inventory" {
   content  = <<-EOF
 								[build]
 								${yandex_compute_instance.build.network_interface.0.nat_ip_address}
@@ -85,5 +91,5 @@ resource "local_file" "inventory" {
 								ansible_become=yes
 								ansible_become_user=root
 								EOF
-  filename = "/etc/ansible/hosts"
+  filename = "${path.root}/hosts"
 }
