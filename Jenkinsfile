@@ -3,45 +3,69 @@ pipeline {
     agent any
 
     stages {
+        // Jenkins runs unprivileged so this is how we get all files in the workspace
+        stage ('set up workspace') {
+            steps {
+                sh 'git clone https://github.com/ArtemVakhitov/devops-school-cert.git'
+                sh 'cp devops-school-cert/.terraformrc ~'
+                sh 'ssh-keygen -t ecdsa -N -f ~/.ssh/id_dsa -q'
+            }
+        }
+        
         stage ('launch instances using Terraform') {
             steps {
-                sh 'terraform init'
-                sh 'terraform apply --auto-approve'
+                dir ("devops-school-cert") {
+                    sh 'terraform init'
+                    sh 'terraform apply --auto-approve'
+                }
             }
         }
         stage ('prepare servers using Ansible') {
             steps {
-                sh 'ansible-playbook playbook.yaml' 
+                dir ("devops-school-cert") {
+                    sh 'ansible-playbook playbook.yaml'
+                } 
             }
         }
-        stage ('git') {
+        stage ('git clone app repo') {
             steps {
-                git 'https://github.com/ArtemVakhitov/myboxfuse.git'
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output build_ip) <<-EOF
+						git clone https://github.com/ArtemVakhitov/myboxfuse.git
+						EOF
+                   '''
             }
         }
-        stage ('build') {
+        stage ('build app') {
             steps {
-                sh 'mvn package'
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output build_ip) <<-EOF
+						cd myboxfuse
+						mvn package
+						EOF
+                   '''
             }
             
         }
         stage ('build & push docker image') {
             environment {
-                HOME = "${env.WORKSPACE}"
+                DKR = credentials("477ad5b1-786e-44ab-80f5-0faae9a7a84b")
             }
             steps {
-                sh 'docker build -t artemvakhitov/myboxweb .'
-                sh 'cat /root/dockersecret | docker login -u artemvakhitov --password-stdin'
-                sh 'docker push artemvakhitov/myboxweb'
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output staging_ip) <<-EOF
+						cd myboxfuse
+						sudo docker build -t artemvakhitov/myboxweb .
+						sudo docker login -u $DKR_USR -p $DKR_PSW
+						sudo docker push artemvakhitov/myboxweb
+						EOF
+                   '''
             }
         }
-        stage ('deploy on prod using docker') {
+        stage ('deploy on staging using docker') {
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no root@158.160.67.159 <<EOF
-docker pull artemvakhitov/myboxweb
-docker run -d -p 80:8080 artemvakhitov/myboxweb
-EOF
-'''
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output staging_ip) <<-EOF
+						sudo docker pull artemvakhitov/myboxweb
+						sudo docker run -d -p 80:8080 artemvakhitov/myboxweb
+						EOF
+                   '''
             }
         }
     }
