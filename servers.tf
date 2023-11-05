@@ -95,3 +95,11 @@ resource "local_file" "ansible_inventory" {
 								EOF
   filename = "${path.root}/hosts"
 }
+
+output "build_ip" {
+  value = yandex_compute_instance.build.network_interface.0.nat_ip_address
+}
+
+output "staging_ip" {
+  value = yandex_compute_instance.staging.network_interface.0.nat_ip_address
+}
