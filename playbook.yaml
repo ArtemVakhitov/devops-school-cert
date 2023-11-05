@@ -11,11 +11,6 @@
         - docker.io
       state: present
 
-  - name: Copy Docker secret to build server
-    copy:
-      src: ~/dockersecret
-      dest: ~/
-
 - name: Prepare staging server
   hosts: staging
 
