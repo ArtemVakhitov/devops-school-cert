@@ -13,8 +13,8 @@
 
   - name: Copy Docker secret to build server
     copy:
-      src: /root/dockersecret
-      dest: /root/
+      src: ~/dockersecret
+      dest: ~/
 
 - name: Prepare staging server
   hosts: staging
