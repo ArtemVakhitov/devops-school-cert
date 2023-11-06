@@ -32,7 +32,7 @@ pipeline {
 
         stage ('git clone app repo') {
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(cd devops-school-cert && terraform output build_ip) <<-EOF
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(awk '/\[build\]/{getline; print}' hosts) <<-EOF
 						git clone https://github.com/ArtemVakhitov/myboxfuse.git
 						EOF
                    '''
@@ -41,7 +41,7 @@ pipeline {
 
         stage ('build app') {
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(cd devops-school-cert && terraform output build_ip) <<-EOF
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(awk '/\[build\]/{getline; print}' hosts) <<-EOF
 						cd myboxfuse
 						mvn package
 						EOF
@@ -54,7 +54,7 @@ pipeline {
                 DKR = credentials("477ad5b1-786e-44ab-80f5-0faae9a7a84b")
             }
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(cd devops-school-cert && terraform output build_ip) <<-EOF
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(awk '/\[build\]/{getline; print}' hosts) <<-EOF
 						cd myboxfuse
 						sudo docker build -t artemvakhitov/myboxweb .
 						sudo docker login -u $DKR_USR -p $DKR_PSW
@@ -66,7 +66,7 @@ pipeline {
 
         stage ('deploy on staging using docker') {
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(cd devops-school-cert && terraform output staging_ip) <<-EOF
+                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(awk '/\[staging\]/{getline; print}' hosts) <<-EOF
 						sudo docker pull artemvakhitov/myboxweb
 						sudo docker run -d -p 80:8080 artemvakhitov/myboxweb
 						EOF
