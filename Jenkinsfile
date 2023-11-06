@@ -6,18 +6,22 @@ pipeline {
         // Jenkins runs unprivileged so this is how we get all files in the workspace
         stage ('set up workspace') {
             steps {
-                sh 'git clone https://github.com/ArtemVakhitov/devops-school-cert.git'
-                sh 'cp -n devops-school-cert/.terraformrc ~'
-                sh 'rm -f ~/.ssh/id_dsa*'
-                sh 'ssh-keygen -q -t ecdsa -N "" -f ~/.ssh/id_dsa'
+                sh '''
+                    git clone https://github.com/ArtemVakhitov/devops-school-cert.git
+                    cp -n devops-school-cert/.terraformrc ~
+                    rm -f ~/.ssh/id_dsa*
+                    ssh-keygen -q -t ecdsa -N "" -f ~/.ssh/id_dsa
+                '''
             }
         }
         
         stage ('launch instances using Terraform') {
             steps {
                 dir ("devops-school-cert") {
-                    sh 'terraform init'
-                    sh 'terraform apply --auto-approve'
+                    sh '''
+                        terraform init
+                        terraform apply --auto-approve
+                    '''
                 }
             }
         }
