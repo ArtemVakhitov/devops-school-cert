@@ -19,6 +19,10 @@ pipeline {
             steps {
                 dir ("devops-school-cert") {
                     sh '''
+                        export PATH="~/yandex-cloud/bin":$PATH
+                        export YC_TOKEN=$(yc iam create-token)
+                        export YC_CLOUD_ID=$(yc config get cloud-id)
+                        export YC_FOLDER_ID=$(yc config get folder-id)
                         terraform init
                         terraform apply --auto-approve
                     '''
