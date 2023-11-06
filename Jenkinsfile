@@ -9,7 +9,7 @@ pipeline {
                 sh 'git clone https://github.com/ArtemVakhitov/devops-school-cert.git'
                 sh 'cp devops-school-cert/.terraformrc ~'
                 sh 'rm -f ~/.ssh/id_dsa*'
-                sh 'ssh-keygen -t ecdsa -N -f ~/.ssh/id_dsa -q'
+                sh 'ssh-keygen -q -t ecdsa -N "" -f ~/.ssh/id_dsa'
             }
         }
         
