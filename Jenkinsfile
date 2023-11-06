@@ -1,6 +1,6 @@
 pipeline {
     
-    agent any
+    agent { label 'local' }
 
     stages {
         // Jenkins runs unprivileged so this is how we get all files in the workspace
