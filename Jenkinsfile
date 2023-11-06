@@ -8,9 +8,9 @@ pipeline {
             steps {
                 sh '''
                     git clone https://github.com/ArtemVakhitov/devops-school-cert.git
-                    cp -n devops-school-cert/.terraformrc ~
-                    rm -f ~/.ssh/id_dsa*
-                    ssh-keygen -q -t ecdsa -N "" -f ~/.ssh/id_dsa
+                    cp -n devops-school-cert/.terraformrc $HOME
+                    rm -f $HOME/.ssh/id_dsa*
+                    ssh-keygen -q -t ecdsa -N "" -f $HOME/.ssh/id_dsa
                 '''
             }
         }
@@ -19,7 +19,7 @@ pipeline {
             steps {
                 dir ("devops-school-cert") {
                     sh '''
-                        export PATH="~/yandex-cloud/bin":$PATH
+                        export PATH="$HOME/yandex-cloud/bin":$PATH
                         export YC_TOKEN=$(yc iam create-token)
                         export YC_CLOUD_ID=$(yc config get cloud-id)
                         export YC_FOLDER_ID=$(yc config get folder-id)
