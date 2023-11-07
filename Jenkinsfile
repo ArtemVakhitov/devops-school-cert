@@ -57,21 +57,10 @@ pipeline {
                 dir ("devops-school-cert") {
                     sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw build_ip) <<-EOF
 							git clone https://github.com/ArtemVakhitov/myboxfuse.git
-							EOF
-                    '''
-                }
-            }
-        }
-
-        stage ('build app') {
-        when { expression { return !params.destroy } }
-            steps {
-                dir ("devops-school-cert") {
-                    sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw build_ip) <<-EOF
 							cd myboxfuse
 							mvn package
 							EOF
-                       '''
+                    '''
                 }
             }
         }
