@@ -12,6 +12,8 @@ The following parameters are defined for the build:
 
 The build uses Docker Hub credentials stored natively in Jenkins. Make sure to replace those with your own at stage 5 ("build & push docker image").
 
+The Boxfuse app (original repo: <https://github.com/boxfuse/boxfuse-sample-java-war-hello>) is used for this assignment, imported into my own repo at <https://github.com/ArtemVakhitov/myboxfuse.git> with a Dockerfile added to it. I could do without it but decided to reuse this repo created for another DevOps School assignment.
+
 ## Steps
 
 1. Prepare Jenkins workspace. In particular, on the first run, this requests a Yandex Cloud token and saves it to a file. On subsequent runs, the token is requested again only if the "regen" build parameter is set to true; otherwise, the saved token is reused.
@@ -19,4 +21,4 @@ The build uses Docker Hub credentials stored natively in Jenkins. Make sure to r
 3. Run Ansible playbook that installs the required packages on the instances.
 4. On the build server, clone the app repo and build the app using Maven.
 5. Build a Docker image of the app and push it from the build server to Docker Hub.
-6. Pull the app image from Docker Hub and deploy on the staging server.
+6. Pull the app image from Docker Hub and deploy on the staging server at <http://staging_ip/hello-1.0>.
