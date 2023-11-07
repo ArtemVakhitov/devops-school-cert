@@ -1,5 +1,5 @@
 pipeline {
-    
+    // This is an agent created on the Jenkins server and running under the primary, non-root user
     agent { label 'local' }
 
     stages {
