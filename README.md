@@ -14,7 +14,7 @@ The pipeline uses Docker Hub credentials stored natively in Jenkins. Make sure t
 
 The Boxfuse app (original repo: <https://github.com/boxfuse/boxfuse-sample-java-war-hello>) is used for this assignment, imported into my own repo at <https://github.com/ArtemVakhitov/myboxfuse.git> with a Dockerfile added to it. I could do without it but decided to reuse this repo created for another DevOps School assignment.
 
-Since SCM checkout is used for the pipeline, this repo is not specifically cloned in the code, and all work is done at the workspace root.
+For the pipeline to work without modifications, it needs to be run using the SCM checkout procedure and not copy-pasted into the Jenkins pipeline editor.
 
 ## Steps
 
