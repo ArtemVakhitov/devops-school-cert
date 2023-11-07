@@ -12,8 +12,8 @@ pipeline {
                     rm -rf devops-school-cert
                     git clone https://github.com/ArtemVakhitov/devops-school-cert.git
                     cp -n devops-school-cert/.terraformrc $HOME
-                    rm -f $HOME/.ssh/id_dsa*
-                    ssh-keygen -q -t ecdsa -N "" -f $HOME/.ssh/id_dsa
+                    rm -f $HOME/.ssh/devops-school-cert*
+                    ssh-keygen -q -t ecdsa -N "" -f $HOME/.ssh/devops-school-cert
                 '''
             }
         }

@@ -37,7 +37,7 @@ resource "yandex_compute_instance" "build" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_dsa.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/devops-school-cert.pub")}"
   }
 
 }
@@ -68,12 +68,11 @@ resource "yandex_compute_instance" "staging" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_dsa.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/devops-school-cert.pub")}"
   }
 
 }
 
-# Work around lack of documentation on relative inventory paths
 resource "local_file" "ansible_config" {
   content  = <<-EOF
 								[defaults]
