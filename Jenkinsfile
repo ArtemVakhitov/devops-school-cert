@@ -5,6 +5,8 @@ pipeline {
     stages {
         
         stage ('set up workspace') {
+        // If the "destroy" parameter is set, only the 2nd stage is run with "terraform destroy"
+        when { expression { return !params.destroy } }
             steps {
                 sh '''
                     rm -rf devops-school-cert
@@ -16,12 +18,12 @@ pipeline {
             }
         }
         
-        stage ('launch instances using Terraform') {
+        stage ('launch or destroy instances using Terraform') {
             steps {
                 dir ("devops-school-cert") {
                     sh '''
                         export PATH="$HOME/yandex-cloud/bin":$PATH
-                        # Don't request a token every time, use a file and regen request variable
+                        # Don't request a token every time, use a file and the "regen" parameter
                         if [ -f "$HOME/yctoken" ] && ! $regen; then
                             export YC_TOKEN=$(cat $HOME/yctoken)
                         else
@@ -29,14 +31,19 @@ pipeline {
                         fi
                         export YC_CLOUD_ID=$(yc config get cloud-id)
                         export YC_FOLDER_ID=$(yc config get folder-id)
-                        terraform init
-                        terraform apply --auto-approve
+                        if $destroy; then
+                            terraform destroy --auto-approve
+                        else
+                            terraform init
+                            terraform apply --auto-approve
+                        fi
                     '''
                 }
             }
         }
 
         stage ('prepare servers using Ansible') {
+        when { expression { return !params.destroy } }
             steps {
                 dir ("devops-school-cert") {
                     sh 'ansible-playbook playbook.yaml'
@@ -45,6 +52,7 @@ pipeline {
         }
 
         stage ('git clone app repo') {
+        when { expression { return !params.destroy } }
             steps {
                 sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(sed -n '/\[build\]/{n;p;}' devops-school-cert/hosts) <<-EOF
 						git clone https://github.com/ArtemVakhitov/myboxfuse.git
@@ -54,6 +62,7 @@ pipeline {
         }
 
         stage ('build app') {
+        when { expression { return !params.destroy } }
             steps {
                 sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(sed -n '/\[build\]/{n;p;}' devops-school-cert/hosts) <<-EOF
 						cd myboxfuse
@@ -64,6 +73,7 @@ pipeline {
         }
 
         stage ('build & push docker image') {
+        when { expression { return !params.destroy } }
             environment {
                 DKR = credentials("477ad5b1-786e-44ab-80f5-0faae9a7a84b")
             }
@@ -79,6 +89,7 @@ pipeline {
         }
 
         stage ('deploy on staging using docker') {
+        when { expression { return !params.destroy } }
             steps {
                 sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(sed -n '/\[staging\]/{n;p;}' devops-school-cert/hosts) <<-EOF
 						sudo docker pull artemvakhitov/myboxweb
