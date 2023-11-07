@@ -1,7 +1,6 @@
 - name: Wait till reachable
   hosts: all
   gather_facts: no
-  connection: paramiko
   tasks:
     - name: Wait for system to become reachable
       wait_for_connection:

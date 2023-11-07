@@ -37,7 +37,7 @@ resource "yandex_compute_instance" "build" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/devops_school_cert.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/id_dsa.pub")}"
   }
 
 }
@@ -68,7 +68,7 @@ resource "yandex_compute_instance" "staging" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/devops_school_cert.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/id_dsa.pub")}"
   }
 
 }
