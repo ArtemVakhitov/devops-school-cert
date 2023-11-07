@@ -7,6 +7,7 @@ pipeline {
         stage ('set up workspace') {
             steps {
                 sh '''
+                    rm -rf devops-school-cert
                     git clone https://github.com/ArtemVakhitov/devops-school-cert.git
                     cp -n devops-school-cert/.terraformrc $HOME
                     rm -f $HOME/.ssh/id_dsa*
