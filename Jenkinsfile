@@ -51,7 +51,7 @@ pipeline {
             }
         }
 
-        stage ('git clone app repo') {
+        stage ('git clone app repo and build app') {
         when { expression { return !params.destroy } }
             steps {
                 dir ("devops-school-cert") {
