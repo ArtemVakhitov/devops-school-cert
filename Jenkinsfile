@@ -54,21 +54,25 @@ pipeline {
         stage ('git clone app repo') {
         when { expression { return !params.destroy } }
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(sed -n '/\[build\]/{n;p;}' devops-school-cert/hosts) <<-EOF
-						git clone https://github.com/ArtemVakhitov/myboxfuse.git
-						EOF
-                   '''
+                dir ("devops-school-cert") {
+                    sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw build_ip) <<-EOF
+							git clone https://github.com/ArtemVakhitov/myboxfuse.git
+							EOF
+                    '''
+                }
             }
         }
 
         stage ('build app') {
         when { expression { return !params.destroy } }
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(sed -n '/\[build\]/{n;p;}' devops-school-cert/hosts) <<-EOF
-						cd myboxfuse
-						mvn package
-						EOF
-                   '''
+                dir ("devops-school-cert") {
+                    sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw build_ip) <<-EOF
+							cd myboxfuse
+							mvn package
+							EOF
+                       '''
+                }
             }
         }
 
@@ -78,24 +82,28 @@ pipeline {
                 DKR = credentials("477ad5b1-786e-44ab-80f5-0faae9a7a84b")
             }
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(sed -n '/\[build\]/{n;p;}' devops-school-cert/hosts) <<-EOF
-						cd myboxfuse
-						sudo docker build -t artemvakhitov/myboxweb .
-						sudo docker login -u $DKR_USR -p $DKR_PSW
-						sudo docker push artemvakhitov/myboxweb
-						EOF
-                   '''
+                dir ("devops-school-cert") {
+                    sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw build_ip) <<-EOF
+							cd myboxfuse
+							sudo docker build -t artemvakhitov/myboxweb .
+							sudo docker login -u $DKR_USR -p $DKR_PSW
+							sudo docker push artemvakhitov/myboxweb
+							EOF
+                    '''
+                }
             }
         }
 
         stage ('deploy on staging using docker') {
         when { expression { return !params.destroy } }
             steps {
-                sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(sed -n '/\[staging\]/{n;p;}' devops-school-cert/hosts) <<-EOF
-						sudo docker pull artemvakhitov/myboxweb
-						sudo docker run -d -p 80:8080 artemvakhitov/myboxweb
-						EOF
-                   '''
+                dir ("devops-school-cert") {
+                    sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw staging_ip) <<-EOF
+							sudo docker pull artemvakhitov/myboxweb
+							sudo docker run -d -p 80:8080 artemvakhitov/myboxweb
+							EOF
+                    '''
+                }
             }
         }
     }
