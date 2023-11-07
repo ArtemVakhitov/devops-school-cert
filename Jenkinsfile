@@ -9,8 +9,6 @@ pipeline {
         when { expression { return !params.destroy } }
             steps {
                 sh '''
-                    rm -rf devops-school-cert
-                    git clone --branch alternative --single-branch https://github.com/ArtemVakhitov/devops-school-cert.git
                     cp -n devops-school-cert/.terraformrc $HOME
                     rm -f $HOME/.ssh/id_dsa*
                     ssh-keygen -q -t ecdsa -N "" -f $HOME/.ssh/id_dsa
@@ -20,7 +18,6 @@ pipeline {
         
         stage ('launch or destroy instances using Terraform') {
             steps {
-                dir ("devops-school-cert") {
                     sh '''
                         export PATH="$HOME/yandex-cloud/bin":$PATH
                         # Don't request a token every time, use a file and the "regen" parameter
@@ -38,30 +35,25 @@ pipeline {
                             terraform apply --auto-approve
                         fi
                     '''
-                }
             }
         }
 
         stage ('prepare servers using Ansible') {
         when { expression { return !params.destroy } }
             steps {
-                dir ("devops-school-cert") {
                     sh 'ansible-playbook -vvv playbook.yaml'
-                } 
-            }
+            } 
         }
 
         stage ('git clone app repo and build app') {
         when { expression { return !params.destroy } }
             steps {
-                dir ("devops-school-cert") {
                     sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw build_ip) <<-EOF
 							git clone https://github.com/ArtemVakhitov/myboxfuse.git
 							cd myboxfuse
 							mvn package
 							EOF
                     '''
-                }
             }
         }
 
@@ -71,7 +63,6 @@ pipeline {
                 DKR = credentials("477ad5b1-786e-44ab-80f5-0faae9a7a84b")
             }
             steps {
-                dir ("devops-school-cert") {
                     sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw build_ip) <<-EOF
 							cd myboxfuse
 							sudo docker build -t artemvakhitov/myboxweb .
@@ -79,20 +70,17 @@ pipeline {
 							sudo docker push artemvakhitov/myboxweb
 							EOF
                     '''
-                }
             }
         }
 
         stage ('deploy on staging using docker') {
         when { expression { return !params.destroy } }
             steps {
-                dir ("devops-school-cert") {
                     sh '''ssh -T -o StrictHostKeyChecking=no ubuntu@$(terraform output -raw staging_ip) <<-EOF
 							sudo docker pull artemvakhitov/myboxweb
 							sudo docker run -d -p 80:8080 artemvakhitov/myboxweb
 							EOF
                     '''
-                }
             }
         }
     }
