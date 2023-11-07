@@ -17,6 +17,7 @@ The Boxfuse app (original repo: <https://github.com/boxfuse/boxfuse-sample-java-
 ## Steps
 
 1. Prepare Jenkins workspace. In particular, on the first run, this requests a Yandex Cloud token and saves it to a file. On subsequent runs, the token is requested again only if the "regen" build parameter is set to true; otherwise, the saved token is reused.
+Note that the pipeline creates a temporary SSH key pair for each build, deleting a previously created key pair of the same name if it finds one.
 2. Run "terraform init" and "terraform apply" to create the VM instances and populate Ansible inventory. Alternatively, run "terraform destroy" to destroy previously created instances if the "destroy" build parameter is set to "true".
 3. Run Ansible playbook that installs the required packages on the instances.
 4. On the build server, clone the app repo and build the app using Maven.
