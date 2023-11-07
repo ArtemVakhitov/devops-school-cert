@@ -3,7 +3,7 @@ pipeline {
     agent { label 'local' }
 
     stages {
-        // Jenkins runs unprivileged so this is how we get all files in the workspace
+        
         stage ('set up workspace') {
             steps {
                 sh '''
@@ -20,7 +20,12 @@ pipeline {
                 dir ("devops-school-cert") {
                     sh '''
                         export PATH="$HOME/yandex-cloud/bin":$PATH
-                        export YC_TOKEN=$(yc iam create-token)
+                        # Don't request a token every time, use a file and regen request variable
+                        if [ -f "yctoken" && not $regen ]; then
+                            export YC_TOKEN=$(cat yctoken)
+                        else
+                            export YC_TOKEN=$(yc iam create-token | tee yctoken)
+                        fi
                         export YC_CLOUD_ID=$(yc config get cloud-id)
                         export YC_FOLDER_ID=$(yc config get folder-id)
                         terraform init
