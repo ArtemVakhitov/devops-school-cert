@@ -10,9 +10,11 @@ The following parameters are defined for the build:
 - regen: If set (true), requests a new Yandex Cloud token.
 - destroy: If set (true), initiates a "terraform destroy" action.
 
-The build uses Docker Hub credentials stored natively in Jenkins. Make sure to replace those, along with the corresponding image tags, with your own at stages 5 and 6.
+The pipeline uses Docker Hub credentials stored natively in Jenkins. Make sure to replace those, along with the corresponding image tags, with your own at stages 5 and 6.
 
 The Boxfuse app (original repo: <https://github.com/boxfuse/boxfuse-sample-java-war-hello>) is used for this assignment, imported into my own repo at <https://github.com/ArtemVakhitov/myboxfuse.git> with a Dockerfile added to it. I could do without it but decided to reuse this repo created for another DevOps School assignment.
+
+Since SCM checkout is used for the pipeline, this repo is not specifically cloned in the code, and all work is done at the workspace root.
 
 ## Steps
 
