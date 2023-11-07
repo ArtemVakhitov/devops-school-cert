@@ -16,12 +16,15 @@ pipeline {
         }
         
         stage ('launch instances using Terraform') {
+            environment {
+                REGEN = "${params.regen}"
+            }
             steps {
                 dir ("devops-school-cert") {
                     sh '''
                         export PATH="$HOME/yandex-cloud/bin":$PATH
                         # Don't request a token every time, use a file and regen request variable
-                        if [ -f "yctoken" ] && [ ! $regen ]; then
+                        if [ -f "yctoken" ] && [ ! $REGEN ]; then
                             export YC_TOKEN=$(cat yctoken)
                         else
                             export YC_TOKEN=$(yc iam create-token | tee yctoken)
