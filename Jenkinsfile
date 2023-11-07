@@ -46,7 +46,7 @@ pipeline {
         when { expression { return !params.destroy } }
             steps {
                 dir ("devops-school-cert") {
-                    sh 'ansible-playbook playbook.yaml'
+                    sh 'ansible-playbook -vvv playbook.yaml'
                 } 
             }
         }
