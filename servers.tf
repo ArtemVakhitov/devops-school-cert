@@ -77,7 +77,7 @@ resource "yandex_compute_instance" "staging" {
 resource "local_file" "ansible_config" {
   content  = <<-EOF
 								[defaults]
-								inventory="${path.root}/hosts"
+								inventory = ./hosts
 								EOF
   filename = "${path.root}/ansible.cfg"
 }
