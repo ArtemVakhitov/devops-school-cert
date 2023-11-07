@@ -25,7 +25,7 @@ pipeline {
                     sh '''
                         export PATH="$HOME/yandex-cloud/bin":$PATH
                         # Don't request a token every time, use a file and regen request variable
-                        if [ -f "yctoken" ] && ! $REGEN; then
+                        if [ -f "$HOME/yctoken" ] && ! $REGEN; then
                             export YC_TOKEN=$(cat $HOME/yctoken)
                         else
                             export YC_TOKEN=$(yc iam create-token | tee $HOME/yctoken)
