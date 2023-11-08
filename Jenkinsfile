@@ -41,7 +41,7 @@ pipeline {
         stage ('prepare servers using Ansible') {
         when { expression { return !params.destroy } }
             steps {
-                    sh 'ansible-playbook -vvv playbook.yaml'
+                    sh 'ansible-playbook playbook.yaml'
             } 
         }
 
