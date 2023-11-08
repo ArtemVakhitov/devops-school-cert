@@ -43,7 +43,7 @@ resource "yandex_compute_instance" "terra" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_dsa.pub")}"
+    ssh-keys = "ubuntu:${file("~/.ssh/devops_school_cert.pub")}"
   }
 
 }
@@ -67,7 +67,7 @@ resource "local_file" "ansible_inventory" {
 								ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
 								ansible_become=yes
 								ansible_become_user=root
-                ansible_ssh_private_key_file=~/.ssh/id_dsa
+                ansible_ssh_private_key_file=~/.ssh/devops_school_cert
 								EOF
   filename = "${path.root}/hosts"
 }
