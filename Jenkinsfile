@@ -10,8 +10,8 @@ pipeline {
             steps {
                 sh '''
                     cp -n devops-school-cert/.terraformrc $HOME
-                    rm -f $HOME/.ssh/devops_school_cert*
-                    ssh-keygen -q -t ecdsa -N "" -f $HOME/.ssh/devops_school_cert
+                    rm -f $HOME/.ssh/id_dsa*
+                    ssh-keygen -q -t ecdsa -N "" -f $HOME/.ssh/id_dsa
                 '''
             }
         }
