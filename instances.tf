@@ -64,7 +64,7 @@ resource "local_file" "ansible_inventory" {
 								${yandex_compute_instance.terra["staging"].network_interface.0.nat_ip_address}
 								[all:vars]
 								ansible_user=ubuntu
-								ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
+								ansible_ssh_common_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectionAttempts=20"
 								ansible_become=yes
 								ansible_become_user=root
                 ansible_ssh_private_key_file=~/.ssh/devops_school_cert
