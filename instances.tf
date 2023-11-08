@@ -67,7 +67,7 @@ resource "local_file" "ansible_inventory" {
 								ansible_ssh_common_args="-o StrictHostKeyChecking=no -o ConnectionAttempts=20"
 								ansible_become=yes
 								ansible_become_user=root
-                ansible_ssh_private_key_file=~/.ssh/id_dsa
+								ansible_ssh_private_key_file=~/.ssh/id_dsa
 								EOF
   filename = "${path.root}/hosts"
 }
