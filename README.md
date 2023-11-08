@@ -16,7 +16,7 @@ The Boxfuse app (original repo: <https://github.com/boxfuse/boxfuse-sample-java-
 
 For the pipeline to work without modifications, it needs to be run using the SCM checkout procedure and not copy-pasted into the Jenkins pipeline editor.
 
-## Steps
+## Description of Pipeline Stages
 
 1. Prepare Jenkins workspace. In particular, on the first run, this requests a Yandex Cloud token and saves it to a file. On subsequent runs, the token is requested again only if the "regen" build parameter is set to true; otherwise, the saved token is reused.
 Note that the pipeline creates a temporary SSH key pair for each build, deleting a previously created key pair of the same name if it finds one.
